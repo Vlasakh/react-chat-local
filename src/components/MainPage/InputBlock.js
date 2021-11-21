@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -16,14 +16,34 @@ const styles = makeStyles(() => ({
   },
 }));
 
-function InputBlock() {
+function InputBlock({ onSendMsg }) {
   const classes = styles();
+  const [txt, setTxt] = useState('');
+  const inputRef = useRef();
+
+  function handleClick() {
+    onSendMsg({
+      message: txt,
+      successCallback: () => {
+        setTxt('');
+        inputRef.current?.focus();
+      },
+    });
+  }
 
   return (
     <div className={classes.root}>
-      <TextField className={classes.input} label="Message" variant="outlined" size="small" />
+      <TextField
+        inputRef={inputRef}
+        className={classes.input}
+        label="Message"
+        variant="outlined"
+        size="small"
+        value={txt}
+        onChange={(e) => setTxt(e.target.value)}
+      />
       <div>
-        <Button variant={'contained'} color="primary">
+        <Button disabled={!txt} variant={'contained'} color="primary" onClick={handleClick}>
           Send
         </Button>
       </div>

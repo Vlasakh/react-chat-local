@@ -1,8 +1,7 @@
 import React from 'react';
 
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 
 export const LAST_MESSAGE_ID = 'id-last-message-js';
 
@@ -26,6 +25,9 @@ const styles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
     fontWeight: 'bold',
   },
+  isNew: {
+    color: 'orange',
+  },
   time: {
     paddingLeft: 30,
     fontSize: 12,
@@ -35,7 +37,7 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
-function Message({ message, time, userId, users, num, isLast }) {
+function Message({ message, time, userId, users, num, isNew, isLast }) {
   const classes = styles();
 
   return (
@@ -44,7 +46,14 @@ function Message({ message, time, userId, users, num, isLast }) {
         <span className={classes.numPos}>
           <div className={classes.num}>#{num + 1} </div>
         </span>
-        <span className={classes.userName}>{users[userId].name}</span>
+        <span
+          className={clsx({
+            [classes.userName]: true,
+            [classes.isNew]: isNew,
+          })}
+        >
+          {users[userId].name}
+        </span>
         <span className={classes.time}>{time.format('HH:mm:ss DD MMM YY')}</span>
       </div>
       <div className={classes.message}>{message}</div>

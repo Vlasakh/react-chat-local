@@ -16,39 +16,57 @@ const styles = makeStyles(() => ({
   },
 }));
 
-function MainPage({ users, messages, messagesOrder, currentUser, fetchMessages }) {
+function MainPage({
+  users,
+  messages,
+  messagesOrder,
+  currentUser,
+  newMessages,
+  fetchMessages,
+  fetchSendMsg,
+  fetchNewMessages,
+}) {
   const classes = styles();
 
   useEffect(() => {
     fetchMessages(0, MESSAGES_PAGE_LEN);
+
+    window.addEventListener('storage', function (e) {
+      if (e.newValue.startsWith('newMessage')) {
+        console.log('newValue', e.newValue);
+        fetchNewMessages();
+      }
+    });
   }, []);
 
-  function handleClick() {}
+  const handleSendMsg = (userId) => (data) => fetchSendMsg({ userId, ...data });
 
-  console.log('messages', messages);
   return (
     <div className={classes.root}>
       <a href={'/'} style={{ position: 'absolute', top: 10, right: 10 }}>
         logout
       </a>
       <HeadBlock currentUser={currentUser} />
-      <MessagesBlock users={users} messages={messages} messagesOrder={messagesOrder} />
-      <InputBlock />
+      <MessagesBlock users={users} messages={messages} messagesOrder={messagesOrder} newMessages={newMessages} />
+      <InputBlock onSendMsg={handleSendMsg(currentUser.id)} />
     </div>
   );
 }
 
 const mapConnect = [
-  ({ app: { users, messages, messagesOrder, currentUser } }) => {
+  ({ app: { users, messages, messagesOrder, currentUser, newMessages } }) => {
     return {
       users,
       messages,
       messagesOrder,
       currentUser,
+      newMessages,
     };
   },
   (dispatch) => ({
     fetchMessages: (start, count) => dispatch(actions.fetchMessages(start, count)),
+    fetchSendMsg: (data) => dispatch(actions.fetchSendMsg(data)),
+    fetchNewMessages: () => dispatch(actions.fetchNewMessages),
   }),
 ];
 

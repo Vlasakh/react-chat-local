@@ -13,7 +13,7 @@ const styles = makeStyles(() => ({
   },
 }));
 
-function MessagesBlock({ users, messages, messagesOrder }) {
+function MessagesBlock({ users, messages, messagesOrder, newMessages }) {
   const classes = styles();
   const messagesRef = useRef();
 
@@ -35,6 +35,7 @@ function MessagesBlock({ users, messages, messagesOrder }) {
             users={users}
             {...message}
             num={messagesOrder.length - 1 - idx}
+            isNew={newMessages.has(id)}
             isLast={idx === messagesOrder.length - 1}
           />
         );

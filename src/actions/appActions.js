@@ -1,26 +1,50 @@
 import { apiGetInitialData } from '../api/apiGetInitialData';
 import { apiGetAuthId } from '../api/apiGetAuthId';
 import { apiGetMessages } from '../api/apiGetMessages';
+import { apiSendMessage } from '../api/apiSendMessage';
+import { apiGetNewMessages } from '../api/apiGetNewMessages';
 
 export const actions = {
   SET_CURRENT_USER: 'SET_CURRENT_USER',
+  SEND_MESSAGE: 'SEND_MESSAGE',
   FETCH_MESSAGES: 'FETCH_MESSAGES',
+  FETCH_NEW_MESSAGES: 'FETCH_NEW_MESSAGES',
 };
 
 actions.fetchInitialData = () => {
-  apiGetInitialData().then((data) => {
-    localStorage.setItem('messages', JSON.stringify(data.messages));
-  });
+  apiGetInitialData();
 };
 
 actions.fetchMessages = (start, count) => (dispatch) => {
   apiGetMessages(start, count).then((data) => {
-    dispatch({ type: actions.FETCH_MESSAGES, payload: data });
+    data && dispatch({ type: actions.FETCH_MESSAGES, payload: data });
   });
 };
 
 actions.fetchGetAuthId = (name) => (dispatch) => {
-  apiGetAuthId().then((id) => {
-    dispatch({ type: actions.SET_CURRENT_USER, payload: { id, name } });
+  apiGetAuthId(name).then((res) => {
+    res && dispatch({ type: actions.SET_CURRENT_USER, payload: { id: res.id, name } });
+  });
+};
+
+actions.fetchSendMsg =
+  ({ successCallback, ...data }) =>
+  (dispatch, getState) => {
+    apiSendMessage(data).then((res) => {
+      if (res) {
+        dispatch({ type: actions.SEND_MESSAGE, payload: null });
+        actions.fetchNewMessages(dispatch, getState);
+        successCallback();
+      }
+    });
+  };
+
+actions.fetchNewMessages = (dispatch, getState) => {
+  const store = getState().app;
+  const id = store.messagesOrder[store.messagesOrder.length - 1];
+  const lastMessage = store.messages[id];
+
+  apiGetNewMessages(lastMessage.time).then((data) => {
+    data && dispatch({ type: actions.FETCH_NEW_MESSAGES, payload: data });
   });
 };
