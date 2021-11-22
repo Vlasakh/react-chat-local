@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 import scrollTo, { BEHAVIOR } from '../../utils/scrollTo';
@@ -13,7 +13,7 @@ const styles = makeStyles(() => ({
   },
 }));
 
-function MessagesBlock({ users, messages, messagesOrder, newMessages }) {
+function MessagesBlock({ userId, users, messages, messagesOrder, newMessages }) {
   const classes = styles();
   const messagesRef = useRef();
 
@@ -32,9 +32,10 @@ function MessagesBlock({ users, messages, messagesOrder, newMessages }) {
         return (
           <Message
             key={id}
-            users={users}
+            userName={users[message.userId].name}
             {...message}
             num={messagesOrder.length - 1 - idx}
+            isCurrentUser={userId === message.userId}
             isNew={newMessages.has(id)}
             isLast={idx === messagesOrder.length - 1}
           />
@@ -44,4 +45,4 @@ function MessagesBlock({ users, messages, messagesOrder, newMessages }) {
   );
 }
 
-export default MessagesBlock;
+export default memo(MessagesBlock);

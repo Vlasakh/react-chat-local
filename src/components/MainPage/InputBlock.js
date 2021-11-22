@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, memo } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -51,4 +51,4 @@ function InputBlock({ onSendMsg }) {
   );
 }
 
-export default InputBlock;
+export default memo(InputBlock);

@@ -1,8 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 
 const styles = makeStyles(() => ({
   root: {
@@ -24,4 +22,4 @@ function HeadBlock({ currentUser }) {
   );
 }
 
-export default HeadBlock;
+export default memo(HeadBlock);

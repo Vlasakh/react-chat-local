@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,  useCallback } from 'react';
 import { connect } from 'react-redux';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -29,17 +29,19 @@ function MainPage({
   const classes = styles();
 
   useEffect(() => {
-    fetchMessages(0, MESSAGES_PAGE_LEN);
-
-    window.addEventListener('storage', function (e) {
+    const storageListener = (e) => {
       if (e.newValue.startsWith('newMessage')) {
-        console.log('newValue', e.newValue);
         fetchNewMessages();
       }
-    });
+    };
+
+    fetchMessages(0, MESSAGES_PAGE_LEN);
+    window.addEventListener('storage', storageListener);
+
+    return () => window.removeEventListener('storage', storageListener);
   }, []);
 
-  const handleSendMsg = (userId) => (data) => fetchSendMsg({ userId, ...data });
+  const handleSendMsg = useCallback((data) => fetchSendMsg({ userId: currentUser.id, ...data }), [currentUser.id]);
 
   return (
     <div className={classes.root}>
@@ -47,8 +49,14 @@ function MainPage({
         logout
       </a>
       <HeadBlock currentUser={currentUser} />
-      <MessagesBlock users={users} messages={messages} messagesOrder={messagesOrder} newMessages={newMessages} />
-      <InputBlock onSendMsg={handleSendMsg(currentUser.id)} />
+      <MessagesBlock
+        userId={currentUser.id}
+        users={users}
+        messages={messages}
+        messagesOrder={messagesOrder}
+        newMessages={newMessages}
+      />
+      <InputBlock onSendMsg={handleSendMsg} />
     </div>
   );
 }

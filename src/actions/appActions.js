@@ -5,14 +5,21 @@ import { apiSendMessage } from '../api/apiSendMessage';
 import { apiGetNewMessages } from '../api/apiGetNewMessages';
 
 export const actions = {
+  CHECK_DEMO_DATA: 'CHECK_DEMO_DATA',
   SET_CURRENT_USER: 'SET_CURRENT_USER',
   SEND_MESSAGE: 'SEND_MESSAGE',
   FETCH_MESSAGES: 'FETCH_MESSAGES',
   FETCH_NEW_MESSAGES: 'FETCH_NEW_MESSAGES',
 };
 
-actions.fetchInitialData = () => {
-  apiGetInitialData();
+actions.checkDemoData = (dispatch) => {
+  const messages = localStorage.getItem('messages');
+
+  dispatch({ type: actions.CHECK_DEMO_DATA, payload: messages });
+};
+
+actions.fetchInitialData = (dispatch) => {
+  apiGetInitialData().then(() => dispatch({ type: actions.CHECK_DEMO_DATA, payload: true }));
 };
 
 actions.fetchMessages = (start, count) => (dispatch) => {

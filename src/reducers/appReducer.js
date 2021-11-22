@@ -4,6 +4,7 @@ import omit from 'lodash/omit';
 import { actions } from '../actions/appActions';
 
 const initialState = {
+  hasDemoData: false,
   users: {},
   messages: {},
   messagesOrder: [],
@@ -15,6 +16,12 @@ const mapIds = ({ id }) => id;
 
 const appReducer = (state = initialState, { type, payload }) => {
   switch (type) {
+    case actions.CHECK_DEMO_DATA:
+      return {
+        ...state,
+        hasDemoData: !!payload,
+      };
+
     case actions.SET_CURRENT_USER:
       return {
         ...state,
