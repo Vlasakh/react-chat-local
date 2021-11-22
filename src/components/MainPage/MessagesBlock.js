@@ -27,7 +27,6 @@ function MessagesBlock({ userId, users, messages, messagesOrder, newMessages }) 
     <div className={classes.root} ref={messagesRef}>
       {messagesOrder.map((id, idx) => {
         const message = messages[id];
-        // const message = messages[messages.length - 1 - idx];
 
         return (
           <Message
